@@ -16,5 +16,19 @@
   "bugs": {
     "url": "https://github.com/maandinh/Tabalho-de-Backend/issues"
   },
-  "homepage": "https://github.com/maandinh/Tabalho-de-Backend#readme"
+  "homepage": "https://github.com/maandinh/Tabalho-de-Backend#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jest": "^30.2.0",
+    "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.2",
+    "supertest": "^7.1.4",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }
