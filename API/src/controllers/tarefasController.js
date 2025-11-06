@@ -30,8 +30,12 @@ async function criar(req, res) {
 }
 
 async function listar(req, res) {
-    const tarefas = await Tarefa.find({});
-    return res.json(tarefas);
+    try {
+        const tarefas = await Tarefa.find({});
+        return res.json(tarefas);
+    } catch (err) {
+        return res.status(500).json({ msg: "Erro ao listar tarefas." });
+    }
 }
 
 async function buscar(req, res, next) {
@@ -53,7 +57,7 @@ async function buscar(req, res, next) {
         };
         return next();
     }
-    return res.status(400).json({ msg: "Tarefa não encontrada." });
+    return res.status(404).json({ msg: "Tarefa não encontrada." });
 }
 
 function exibir(req, res) {
@@ -72,7 +76,7 @@ async function atualizar(req, res) {
         return res.json({
             id: tarefaAtualizada._id,
             titulo: tarefaAtualizada.titulo,
-            descricao: tarefaEncontrada.descricao,
+            descricao: tarefaAtualizada.descricao,
             concluida: tarefaAtualizada.concluida,
             dataCriacao: tarefaAtualizada.dataCriacao,
             dataAtualizacao: new Date,
