@@ -1,14 +1,36 @@
 const mongoose = require("mongoose");
+const userModel = require("./userModel");
 
-const schema = new mongoose.Schema({
-    email: {type: String, required: [true, 'Email é obrigatorio'], unique: true}, senha: {type: String, required: true}, 
-    nome: {
+const tarefasSchema = new mongoose.Schema({
+    titulo: {
         type: String, 
-        required: [true, 'Nome da tarefa é obrigatório.'],
+        required: [true, 'Título da tarefa é obrigatório.'],
         trim: true,
-        minLength: [3, 'Nome da tarefa deve ter pelo menos 3 caracteres.']
+        minLength: [3, 'Título da tarefa deve ter pelo menos 3 caracteres.']
     },
-    concluida: Boolean
+    descricao: {
+        type: String, 
+        required: [true, 'Descrição da tarefa é obrigatório.'],
+        trim: true,
+        minLength: [3, 'Descrição da tarefa deve ter pelo menos 3 caracteres.']
+    },
+    concluida: {
+        type: Boolean,
+        required: true
+    },
+    dataCriacao: {
+        type: Date,
+        required: true
+    },
+    dataAtualizacao: {
+        type: Date,
+        required: false
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User',
+        required: true
+    }
 });
 
-module.exports = mongoose.model('Tarefa', schema);
+module.exports = mongoose.model('Tarefa', tarefasSchema);

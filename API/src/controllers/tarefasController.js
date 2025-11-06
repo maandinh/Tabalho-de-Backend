@@ -4,19 +4,25 @@ const Tarefa = require("../models/tarefasModel");
 async function criar(req, res) {
     try {
         const novaTarefa = await Tarefa.create({
-            nome: req.body.nome,
-            concluida: false
+            titulo: req.body.titulo,
+            descricao: req.body.descricao,
+            concluida: false,
+            dataCriacao: req.body.dataCriacao,
+            owner: req.user.id
         });
 
         return res.status(201).json({
             id: novaTarefa._id,
-            nome: novaTarefa.nome,
-            concluida: novaTarefa.concluida
+            titulo: novaTarefa.titulo,
+            descricao: novaTarefa.descricao,
+            concluida: novaTarefa.concluida,
+            dataCriacao: novaTarefa.dataCriacao,
+            owner: novaTarefa.owner
         });
     } catch (err) {
         if (err.errors) {
             return res.status(422).json({
-                msg: err.errors["nome"].message
+                msg: err.errors["titulo"].message
             });
         }
         return res.status(500).json({ msg: "Erro interno do servidor. Tente novamente mais tarde." });
@@ -39,8 +45,11 @@ async function buscar(req, res, next) {
     if (tarefaEncontrada) {
         req.tarefa = {
             id: tarefaEncontrada._id,
-            nome: tarefaEncontrada.nome,
-            concluida: tarefaEncontrada.concluida
+            titulo: tarefaEncontrada.titulo,
+            descricao: tarefaEncontrada.descricao,
+            concluida: tarefaEncontrada.concluida,
+            dataCriacao: tarefaEncontrada.dataCriacao,
+            owner: tarefaEncontrada.owner
         };
         return next();
     }
@@ -62,13 +71,17 @@ async function atualizar(req, res) {
 
         return res.json({
             id: tarefaAtualizada._id,
-            nome: tarefaAtualizada.nome,
-            concluida: tarefaAtualizada.concluida
+            titulo: tarefaAtualizada.titulo,
+            descricao: tarefaEncontrada.descricao,
+            concluida: tarefaAtualizada.concluida,
+            dataCriacao: tarefaAtualizada.dataCriacao,
+            dataAtualizacao: new Date,
+            owner: tarefaAtualizada.owner
         });
     } catch (err) {
         if (err.errors) {
             return res.status(422).json({
-                msg: err.errors["nome"].message
+                msg: err.errors["titulo"].message
             });
         }
     }
