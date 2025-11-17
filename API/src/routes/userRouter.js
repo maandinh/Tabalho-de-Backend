@@ -8,7 +8,7 @@ router.post('/registrar', controller.registrar);
 
 router.post('/login', controller.login);
 
-router.post('renovar', controller.renovar);
+router.post('/renovar', controller.renovar);
 
 /* router.post('/register', async (req, res) => {
     const { email, senha } = req.body;
