@@ -1,0 +1,1 @@
+// functions: gerarToken, verificarToken, criptografarSenha, compararSenha

@@ -7,4 +7,4 @@ router.post('/', controller.criar);
 
 router.get('/', controller.listar);
 
-module.exports = router;
+module.exports = router; 
