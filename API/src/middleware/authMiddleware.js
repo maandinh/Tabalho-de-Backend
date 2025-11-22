@@ -25,6 +25,11 @@ function verificarToken(req, res, next) {
     const { authorization } = req.headers;
     const token = authorization.split(" ")[1];
     const payload = jwt.verify(token, process.env.JWT_SEGREDO);
+<<<<<<< HEAD
+=======
+    console.log("Token recebido:", token);
+    console.log("Payload decodificado:", payload);
+>>>>>>> 08667f3 (Resolve conflito: mantém authMiddleware.js corrigido e aceita deleções)
     req.payload = payload; 
     return next();
   } catch (err) {
