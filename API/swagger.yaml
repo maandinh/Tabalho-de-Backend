@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: API de Tarefas
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+tags:
+  - usuarios
+  - tarefas
+
+paths:
+  /tarefas:
+    post:
+      tags:
+        - tarefas
+      summary: Criar nova tarefa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tarefa'
+      responses:
+        201:
+          description: Tarefa criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tarefa'
+        422:
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+
+    get:
+      tags:
+        - tarefas
+      summary: Listar todas as tarefas
+      responses:
+        200:
+          description: Lista de tarefas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tarefa'
+
+  /tarefas/{id}:
+    get:
+      tags:
+        - tarefas
+      summary: Buscar tarefa por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Tarefa encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tarefa'
+        400:
+          description: ID inválido
+        404:
+          description: Tarefa não encontrada
+
+    put:
+      tags:
+        - tarefas
+      summary: Atualizar tarefa por ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tarefa'
+      responses:
+        200:
+          description: Tarefa atualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tarefa'
+        422:
+          description: Erro de validação
+
+    delete:
+      tags:
+        - tarefas
+      summary: Remover tarefa por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Tarefa removida
+        400:
+          description: ID inválido
+        404:
+          description: Tarefa não encontrada
+          
+  /usuarios/registrar:
+    post:
+      tags:
+        - usuarios
+      summary: Registrar novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        201:
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        422:
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+
+  /usuarios/login:
+    post:
+      tags:
+        - usuarios
+      summary: Login de usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          description: Login realizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        401:
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+
+  /usuarios/renovar:
+    post:
+      tags:
+        - usuarios
+      summary: Renovar token JWT
+      responses:
+        200:
+          description: Token renovado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        401:
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+components:
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "675dfe14720bbc96e0fd35c3"
+        email:
+          type: string
+          example: "usuario@email.com"
+        senha:
+          type: string
+          example: "123456"
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        senha:
+          type: string
+      required: [email, senha]
+
+    Mensagem:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: "Mensagem informativa."
+
+    Tarefa:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "675dfa11415d5c6421fc1230"
+        titulo:
+          type: string
+        descricao:
+          type: string
+        concluida:
+          type: boolean
+        dataCriacao:
+          type: string
+          format: date-time
+        owner:
+          type: string
+      required: [titulo, descricao, dataCriacao]
