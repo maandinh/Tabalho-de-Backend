@@ -12,7 +12,7 @@ function cifrarSenha(password) {
 
 function gerarToken(payload) {
   try {
-    const expiresIn = 60; 
+    const expiresIn = 60;
     const token = jwt.sign(payload, process.env.JWT_SEGREDO, { expiresIn });
     return token;
   } catch (err) {
@@ -22,18 +22,24 @@ function gerarToken(payload) {
 
 function verificarToken(req, res, next) {
   try {
-    const { authorization } = req.headers;
-    const token = authorization.split(" ")[1];
-    const payload = jwt.verify(token, process.env.JWT_SEGREDO);
-<<<<<<< HEAD
-=======
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ msg: "Token não fornecido ou formato inválido" });
+    }
+
+    const token = authHeader.replace('Bearer', '').trim();
     console.log("Token recebido:", token);
+
+
+    const payload = jwt.verify(token, process.env.JWT_SEGREDO);
     console.log("Payload decodificado:", payload);
->>>>>>> 08667f3 (Resolve conflito: mantém authMiddleware.js corrigido e aceita deleções)
-    req.payload = payload; 
+
+    req.payload = payload;
+    req.user = payload;
     return next();
   } catch (err) {
-    return res.status(401).json({ msg: "Token invalido" });
+    console.log("ERRO NO TOKEN:", err.message);
+    return res.status(401).json({ msg: "Token inválido" });
   }
 }
 
