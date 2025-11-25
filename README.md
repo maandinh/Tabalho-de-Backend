@@ -108,7 +108,7 @@ JWT_SECRET=sua_chave_secreta
 
 ---
 
-## Função dos TESTES
+## Funções dos TESTES
 
 - Cadastro de usuário
 - Login
