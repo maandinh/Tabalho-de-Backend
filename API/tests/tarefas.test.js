@@ -13,9 +13,6 @@ describe("API completa - Autenticação e Tarefas", () => {
   let tarefaId;
 
   beforeAll(async () => {
-    const mongoURL = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@${process.env.MONGODB_HOST}/${process.env.MONGODB_DBNAME}_test`;
-    await mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
-
     user = await User.create({ email: "teste@teste.com", senha: "123456" });
     const payload = { id: user._id, email: user.email };
     token = jwt.sign(payload, process.env.JWT_SECRET || "segredo", { expiresIn: "1h" });
@@ -23,11 +20,10 @@ describe("API completa - Autenticação e Tarefas", () => {
 
   afterEach(async () => {
     await Tarefa.deleteMany({});
-    await User.deleteMany({ email: { $ne: "teste@teste.com" } });
+    await User.deleteMany({});
   });
 
   afterAll(async () => {
-    await User.deleteMany({});
     await mongoose.connection.close();
   });
 
