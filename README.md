@@ -29,7 +29,6 @@ Este repositório está organizado da seguinte forma:
   - **middlewares/**: Middlewares como autenticação JWT.
 - **tests/**: Testes automatizados com Jest + Supertest.
 - **.env**: Variáveis de ambiente para desenvolvimento.
-- **.env.test**: Variáveis de ambiente para testes.
 
 ---
 
