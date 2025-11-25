@@ -108,6 +108,52 @@ JWT_SECRET=sua_chave_secreta
 
 ---
 
+## Exemplos de Uso
+
+### 1. Registrar usuário
+```bash
+curl -X POST http://localhost:3000/auth/register \
+-H "Content-Type: application/json" \
+-d '{"email":"usuario@exemplo.com","senha":"123456"}'
+```
+RESPOSTA ESPERADA
+```json
+{
+  "id": "64f8c2e1f1a1234567890abc",
+  "email": "usuario@exemplo.com"
+}
+```
+### 2. Login
+```bash
+curl -X POST http://localhost:3000/auth/login \
+-H "Content-Type: application/json" \
+-d '{"email":"usuario@exemplo.com","senha":"123456"}'
+```
+RESPOSTA ESPERADA
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+### 3. Criar uma tarefa
+```bash
+curl -X POST http://localhost:3000/tarefas \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer <TOKEN_DO_LOGIN>" \
+-d '{"titulo":"Estudar JavaScript","descricao":"Estudar ESModules e CommonJS"}'
+```
+RESPOSTA ESPERADA
+```json
+{
+  "id": "64f8c3e1f1a1234567890def",
+  "titulo": "Estudar JavaScript",
+  "descricao": "Estudar ESModules e CommonJS",
+  "owner": "64f8c2e1f1a1234567890abc"
+}
+```
+
+---
+
 ## Funções dos TESTES
 
 - Cadastro de usuário
