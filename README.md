@@ -29,6 +29,7 @@ Este repositório está organizado da seguinte forma:
   - **middlewares/**: Middlewares como autenticação JWT.
 - **tests/**: Testes automatizados com Jest + Supertest.
 - **.env**: Variáveis de ambiente para desenvolvimento.
+- **app.js**: Inicializa o servidor e conecta ao MongoDB via Mongoose.
 
 ---
 
