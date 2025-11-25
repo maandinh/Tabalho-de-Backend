@@ -123,3 +123,12 @@ JWT_SECRET=sua_chave_secreta
 - DELETE retorna *204 sem corpo*
 - Validações personalizadas podem gerar *erros 422*
 - O banco de testes é isolado do banco de desenvolvimento
+
+---
+
+## Integrantes do Grupo e Divisão de Tarefas
+
+- **Julia** – Setup inicial do projeto e documentação; contribuiu na configuração do banco de dados junto com Mariana.  
+- **Mariana** – Configuração do banco de dados junto com Julia; contribuiu na autenticação e no CRUD de tarefas junto com Felipe.  
+- **Felipe** – Implementação da autenticação e do CRUD de tarefas junto com Mariana.  
+- **Amanda** – Testes unitários e de integração; implementou melhorias e funcionalidades extras.
