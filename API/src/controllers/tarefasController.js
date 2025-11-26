@@ -8,7 +8,7 @@ async function criar(req, res) {
             descricao: req.body.descricao,
             concluida: false,
             dataCriacao: req.body.dataCriacao,
-            owner: req.user.id
+            owner: req.user?.id || req.body.owner 
         });
 
         return res.status(201).json({
@@ -20,12 +20,16 @@ async function criar(req, res) {
             owner: novaTarefa.owner
         });
     } catch (err) {
-        if (err.errors) {
-            return res.status(422).json({
-                msg: err.errors["titulo"].message
-            });
+        
+        if (err.name === "ValidationError") {
+
+            const mensagens = Object.values(err.errors).map(e => e.menssge);
+              return res.status(422).json({ msg: mensagens[0] });
         }
-        return res.status(500).json({ msg: "Erro interno do servidor. Tente novamente mais tarde." });
+
+        return res.status(500).json({
+            msg: "Erro interno do servidor."
+        });
     }
 }
 
@@ -46,18 +50,21 @@ async function buscar(req, res, next) {
     }
 
     const tarefaEncontrada = await Tarefa.findOne({ _id: id });
-    if (tarefaEncontrada) {
-        req.tarefa = {
-            id: tarefaEncontrada._id,
-            titulo: tarefaEncontrada.titulo,
-            descricao: tarefaEncontrada.descricao,
-            concluida: tarefaEncontrada.concluida,
-            dataCriacao: tarefaEncontrada.dataCriacao,
-            owner: tarefaEncontrada.owner
-        };
-        return next();
+
+    if (!tarefaEncontrada) {
+        return res.status(404).json({ msg: "Tarefa não encontrada." });
     }
-    return res.status(404).json({ msg: "Tarefa não encontrada." });
+
+    req.tarefa = {
+        id: tarefaEncontrada._id,
+        titulo: tarefaEncontrada.titulo,
+        descricao: tarefaEncontrada.descricao,
+        concluida: tarefaEncontrada.concluida,
+        dataCriacao: tarefaEncontrada.dataCriacao,
+        owner: tarefaEncontrada.owner
+    };
+
+    next();
 }
 
 function exibir(req, res) {
@@ -65,9 +72,14 @@ function exibir(req, res) {
 }
 
 async function atualizar(req, res) {
-    try {
-        const { id } = req.params;
-        const tarefaAtualizada = await Tarefa.findOneAndUpdate(
+
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ erro: "ID inválido" });
+        
+    const tarefaAtualizada = await Tarefa.findOneAndUpdate(
             { _id: id },
             { ...req.body },
             { new: true, runValidators: true }
@@ -88,13 +100,58 @@ async function atualizar(req, res) {
                 msg: err.errors["titulo"].message
             });
         }
+
     }
+
+    const tarefaAtualizada = await Tarefa.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!tarefaAtualizada) {
+      return res.status(404).json({ erro: "Tarefa não encontrada" });
+    }
+
+    return res.status(200).json({
+      id: tarefaAtualizada._id,
+      titulo: tarefaAtualizada.titulo,
+      descricao: tarefaAtualizada.descricao,
+      concluida: tarefaAtualizada.concluida,
+      dataCriacao: tarefaAtualizada.dataCriacao,
+      dataAtualizacao: new Date(),
+      owner: tarefaAtualizada.owner
+    });
+
+  } catch (err) {
+    if (err.errors) {
+      return res.status(422).json({
+        msg: err.errors["titulo"]?.message || "Erro de validação"
+      });
+    }
+
+    return res.status(500).json({ erro: "Erro ao atualizar tarefa" });
+  }
 }
 
 async function remover(req, res) {
+  try {
     const { id } = req.params;
+
+     if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ erro: "ID inválido" });
+    }
+
     const tarefaRemovida = await Tarefa.findOneAndDelete({ _id: id });
+    if (!tarefaRemovida) {
+      return res.status(404).json({ erro: "Tarefa não encontrada" });
+    }
+
     return res.status(204).end();
+  } catch (erro) {
+    return res.status(500).json({ erro: "Erro ao remover tarefa" });
+  }
 }
+
 
 module.exports = { criar, listar, buscar, exibir, atualizar, remover };

@@ -7,13 +7,9 @@ const router = express.Router();
 router.use(verificarToken);
 
 router.post('/', controller.criar);
-
 router.get('/', controller.listar);
-
 router.get('/:id', controller.buscar, controller.exibir);
-
-router.put('/:id', controller.buscar, controller.atualizar);
-
-router.delete('/:id', controller.buscar, controller.remover);
+router.put('/:id', controller.atualizar);
+router.delete('/:id', controller.remover);
 
 module.exports = router;
