@@ -9,5 +9,4 @@ router.post('/login', controller.login);
 
 router.post('/renovar', controller.renovar);
 
-
 module.exports = router;
