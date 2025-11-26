@@ -34,8 +34,12 @@ async function criar(req, res) {
 }
 
 async function listar(req, res) {
-    const tarefas = await Tarefa.find({});
-    return res.json(tarefas);
+    try {
+        const tarefas = await Tarefa.find({});
+        return res.json(tarefas);
+    } catch (err) {
+        return res.status(500).json({ msg: "Erro ao listar tarefas." });
+    }
 }
 
 async function buscar(req, res, next) {
@@ -68,11 +72,35 @@ function exibir(req, res) {
 }
 
 async function atualizar(req, res) {
+
   try {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ erro: "ID inválido" });
+        
+    const tarefaAtualizada = await Tarefa.findOneAndUpdate(
+            { _id: id },
+            { ...req.body },
+            { new: true, runValidators: true }
+        );
+
+        return res.json({
+            id: tarefaAtualizada._id,
+            titulo: tarefaAtualizada.titulo,
+            descricao: tarefaAtualizada.descricao,
+            concluida: tarefaAtualizada.concluida,
+            dataCriacao: tarefaAtualizada.dataCriacao,
+            dataAtualizacao: new Date,
+            owner: tarefaAtualizada.owner
+        });
+    } catch (err) {
+        if (err.errors) {
+            return res.status(422).json({
+                msg: err.errors["titulo"].message
+            });
+        }
+
     }
 
     const tarefaAtualizada = await Tarefa.findByIdAndUpdate(
