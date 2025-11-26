@@ -1,61 +1,37 @@
-const User = require('../models/userModel');
-const { cifrarSenha, compararSenha, gerarToken } = require('../middlewares/authMiddleware');
+const jwt = require("jsonwebtoken");
+const bcryptjs = require("bcryptjs");
 
-async function registrar(req, res) {
+function cifrarSenha(password) {
+  const salt = bcryptjs.genSaltSync(10);
+  return bcryptjs.hashSync(password, salt);
+}
+
+function compararSenha(password, hash) {
+  return bcryptjs.compareSync(password, hash);
+}
+
+function gerarToken(payload) {
   try {
-    const senhaCriptografada = cifrarSenha(req.body.senha);
-
-    const novoUser = await User.create({
-      email: req.body.email,
-      senha: senhaCriptografada
-    });
-
-    return res.status(201).json({
-      id: novoUser._id,
-      email: novoUser.email
-    });
+    const expiresIn = 60;
+    const token = jwt.sign(payload, process.env.JWT_SEGREDO || "segredo", { expiresIn });
+    return token;
   } catch (err) {
-    if (err.errors) {
-      return res.status(422).json({
-        msg: err.errors['email'].message
-      });
-    }
-    return res.status(500).json({ msg: 'Erro interno no servidor. Tente novamente mais tarde.' });
+    throw new Error("Erro ao gerar token");
   }
 }
 
-async function login(req, res) {
+function verificarToken(req, res, next) {
   try {
-    const { email, senha } = req.body;
+    const { authorization } = req.headers;
+    if (!authorization) throw new Error("Token não fornecido");
 
-    const userEncontrado = await User.findOne({ email });
-
-    if (userEncontrado && compararSenha(senha, userEncontrado.senha)) {
-      const payload = {
-        id: userEncontrado._id,
-        email: userEncontrado.email
-      };
-
-      return res.json({ token: gerarToken(payload) });
-    }
-
-    return res.status(401).json({ msg: 'Credenciais inválidas.' });
+    const token = authorization.split(" ")[1];
+    const payload = jwt.verify(token, process.env.JWT_SEGREDO || "segredo");
+    req.payload = payload;
+    next();
   } catch (err) {
-    return res.status(500).json({ msg: err.message });
+    return res.status(401).json({ msg: "Token inválido" });
   }
 }
 
-async function renovar(req, res) {
-  try {
-    const payload = {
-      id: req.payload.id,
-      email: req.payload.email
-    };
-
-    return res.json({ token: gerarToken(payload) });
-  } catch (err) {
-    return res.status(500).json({ msg: err.message });
-  }
-}
-
-module.exports = { registrar, login, renovar };
+module.exports = { cifrarSenha, compararSenha, gerarToken, verificarToken };
