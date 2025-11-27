@@ -10,7 +10,7 @@ async function registrar(req, res) {
             return res.status(400).json({ msg: "Email e senha são obrigatórios." });
         }
 
-        const { cifrarSenha } = require('../middleware/authMiddleware');
+        const { cifrarSenha } = require('../middlewares/authMiddleware');
 
         const novoUser = await User.create({
             email: email.trim().toLowerCase(),
@@ -64,13 +64,13 @@ async function login(req, res, next) {
             });
         }*/
 
-        const { compararSenha } = require('../middleware/authMiddleware');
+        const { compararSenha } = require('../middlewares/authMiddleware');
         const senhaCorreta = compararSenha(senha, userEncontrado.senha);
         if (!senhaCorreta) {
             return res.status(401).json({ msg: "Credenciais inválidas." });
         }
 
-        const { gerarToken } = require('../middleware/authMiddleware');
+        const { gerarToken } = require('../middlewares/authMiddleware');
         const payload = {
             iss: 'Minha API',
             id: userEncontrado._id,
@@ -100,7 +100,7 @@ async function renovar(req, res) {
             perfil: req.payload.perfil
         };
 
-        const { gerarToken } = require('../middleware/authMiddleware');
+        const { gerarToken } = require('../middlewares/authMiddleware');
         return res.json({ token: gerarToken(payload) });
     } catch (err) {
         console.log("ERRO AO RENOVAR TOKEN:", err);
