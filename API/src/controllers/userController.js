@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
 const User = require('../models/userModel');
+const { cifrarSenha, compararSenha, gerarToken } = require('../middlewares/authMiddleware');
 
 async function registrar(req, res) {
     console.log("BODY RECEBIDO:", req.body);
@@ -36,9 +36,8 @@ async function registrar(req, res) {
                 msg: primeiroErro?.message || 'Dados inválidos.'
             });
         }
-
-        return res.status(500).json({ msg: 'Erro interno no servidor. Tente novamente mais tarde.' });
-    }
+        return res.status(500).json({ msg: 'Erro interno no servidor. Tente novamente mais tarde.' })
+  }
 }
 
 async function login(req, res, next) {
@@ -58,11 +57,6 @@ async function login(req, res, next) {
         if (!userEncontrado) {
             return res.status(401).json({ msg: "Credenciais inválidas." });
         }
-        /*if (!userEncontrado) {
-            return res.status(401).json({
-                msg: "Credenciais inválidas."
-            });
-        }*/
 
         const { compararSenha } = require('../middlewares/authMiddleware');
         const senhaCorreta = compararSenha(senha, userEncontrado.senha);
