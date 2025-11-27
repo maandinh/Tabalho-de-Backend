@@ -28,17 +28,14 @@ function verificarToken(req, res, next) {
     }
 
     const token = authHeader.replace('Bearer', '').trim();
-    console.log("Token recebido:", token);
 
 
     const payload = jwt.verify(token, process.env.JWT_SEGREDO);
-    console.log("Payload decodificado:", payload);
 
     req.payload = payload;
     req.user = payload;
     return next();
   } catch (err) {
-    console.log("ERRO NO TOKEN:", err.message);
     return res.status(401).json({ msg: "Token inválido" });
   }
 }
