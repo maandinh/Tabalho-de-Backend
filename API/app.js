@@ -22,3 +22,4 @@ app.use('/tarefas', tarefasRouter);
 app.use('/auth', userRouter);
 
 module.exports = app;
+
