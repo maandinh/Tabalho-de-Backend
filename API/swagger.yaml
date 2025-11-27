@@ -10,112 +10,7 @@ tags:
   - tarefas
 
 paths:
-  /tarefas:
-    post:
-      tags:
-        - tarefas
-      summary: Criar nova tarefa
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Tarefa'
-      responses:
-        201:
-          description: Tarefa criada
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Tarefa'
-        422:
-          description: Dados inválidos
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Mensagem'
-
-    get:
-      tags:
-        - tarefas
-      summary: Listar todas as tarefas
-      responses:
-        200:
-          description: Lista de tarefas
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Tarefa'
-
-  /tarefas/{id}:
-    get:
-      tags:
-        - tarefas
-      summary: Buscar tarefa por ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Tarefa encontrada
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Tarefa'
-        400:
-          description: ID inválido
-        404:
-          description: Tarefa não encontrada
-
-    put:
-      tags:
-        - tarefas
-      summary: Atualizar tarefa por ID
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Tarefa'
-      responses:
-        200:
-          description: Tarefa atualizada
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Tarefa'
-        422:
-          description: Erro de validação
-
-    delete:
-      tags:
-        - tarefas
-      summary: Remover tarefa por ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        204:
-          description: Tarefa removida
-        400:
-          description: ID inválido
-        404:
-          description: Tarefa não encontrada
-          
-  /usuarios/registrar:
+  /auth/registrar:
     post:
       tags:
         - usuarios
@@ -126,6 +21,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Usuario'
+            example:
+              email: "teste@teste.com"
+              senha: "123456"
       responses:
         201:
           description: Usuário criado com sucesso
@@ -133,14 +31,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Usuario'
+              example:
+                id: "675dfe14720bbc96e0fd35c3"
+                email: "teste@teste.com"
+        400:
+          description: Email duplicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+              example:
+                msg: "Este e-mail já está cadastrado."
         422:
           description: Dados inválidos
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Mensagem'
+              example:
+                msg: "Email e senha são obrigatórios."
 
-  /usuarios/login:
+  /auth/login:
     post:
       tags:
         - usuarios
@@ -151,6 +62,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: "teste@teste.com"
+              senha: "123456"
       responses:
         200:
           description: Login realizado
@@ -161,14 +75,18 @@ paths:
                 properties:
                   token:
                     type: string
+                example:
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         401:
           description: Credenciais inválidas
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Mensagem'
+              example:
+                msg: "Credenciais inválidas."
 
-  /usuarios/renovar:
+  /auth/renovar:
     post:
       tags:
         - usuarios
@@ -183,12 +101,204 @@ paths:
                 properties:
                   token:
                     type: string
+                example:
+                  token: "novo_token_jwt_aqui"
         401:
-          description: Token inválido
+          description: Token inválido ou expirado
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Mensagem'
+              example:
+                msg: "Token inválido ou expirado."
+
+  /tarefas:
+    post:
+      tags:
+        - tarefas
+      summary: Criar nova tarefa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tarefa'
+            example:
+              titulo: "Nova Tarefa"
+              descricao: "Descrição da nova tarefa"
+              concluida: false
+              dataCriacao: "2025-11-27T18:00:00Z"
+              owner: "675dfe14720bbc96e0fd35c3"
+      responses:
+        201:
+          description: Tarefa criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tarefa'
+              example:
+                id: "675dfa11415d5c6421fc1230"
+                titulo: "Nova Tarefa"
+                descricao: "Descrição da nova tarefa"
+                concluida: false
+                dataCriacao: "2025-11-27T18:00:00Z"
+                owner: "675dfe14720bbc96e0fd35c3"
+        422:
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+              examples:
+                msg: "Título da tarefa é obrigatório."
+              examples:
+                summary: Título vazio
+                  value: { msg: "Título da tarefa é obrigatório." }
+                tituloCurto:
+                  summary: Título curto
+                  value: { msg: "Título da tarefa deve ter pelo menos 3 caracteres." }
+    get:
+      tags:
+        - tarefas
+      summary: Listar todas as tarefas
+      responses:
+        200:
+          description: Lista de tarefas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tarefa'
+              example:
+                - id: "675dfa11415d5c6421fc1230"
+                  titulo: "Nova Tarefa"
+                  descricao: "Descrição da nova tarefa"
+                  concluida: false
+                  dataCriacao: "2025-11-27T18:00:00Z"
+                  owner: "675dfe14720bbc96e0fd35c3"
+
+  /tarefas/{id}:
+    get:
+      tags:
+        - tarefas
+      summary: Buscar tarefa por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "675dfa11415d5c6421fc1230"
+      responses:
+        200:
+          description: Tarefa encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tarefa'
+        400:
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+              example: { msg: "ID inválido." }
+        404:
+          description: Tarefa não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+              example: { msg: "Tarefa não encontrada." }
+
+    put:
+      tags:
+        - tarefas
+      summary: Atualizar tarefa por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "675dfa11415d5c6421fc1230"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tarefa'
+            example:
+              titulo: "Tarefa Atualizada"
+              descricao: "Descrição atualizada"
+              concluida: true
+              dataCriacao: "2025-11-27T18:00:00Z"
+              owner: "675dfe14720bbc96e0fd35c3"
+      responses:
+        200:
+          description: Tarefa atualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tarefa'
+        422:
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+              examples:
+                tituloVazio:
+                  summary: Título vazio
+                  value: { msg: "Título da tarefa é obrigatório." }
+                tituloCurto:
+                  summary: Título curto
+                  value: { msg: "Título da tarefa deve ter pelo menos 3 caracteres." }
+        400:
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+              example: { msg: "ID inválido." }
+        404:
+          description: Tarefa não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+              example: { msg: "Tarefa não encontrada." }
+
+    delete:
+      tags:
+        - tarefas
+      summary: Remover tarefa por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "675dfa11415d5c6421fc1230"
+      responses:
+        204:
+          description: Tarefa removida
+        400:
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+              example: { msg: "ID inválido." }
+        404:
+          description: Tarefa não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensagem'
+              example: { msg: "Tarefa não encontrada." }
+
 components:
   schemas:
     Usuario:
@@ -199,10 +309,13 @@ components:
           example: "675dfe14720bbc96e0fd35c3"
         email:
           type: string
-          example: "usuario@email.com"
+          example: "teste@teste.com"
         senha:
           type: string
           example: "123456"
+      required:
+        - email
+        - senha
 
     LoginRequest:
       type: object
@@ -237,4 +350,4 @@ components:
           format: date-time
         owner:
           type: string
-      required: [titulo, descricao, dataCriacao]
+      required: [titulo, descricao, concluida, dataCriacao, owner]

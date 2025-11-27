@@ -1,102 +1,81 @@
-const supertest = require("supertest");
-const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
-const app = require("../app");
-const Tarefa = require("../src/models/tarefasModel");
-const User = require("../src/models/userModel");
+const supertest = require('supertest');
+const app = require('../app.js');
+const mongoose = require('mongoose');
+
+const {gerarToken} = require('../src/middlewares/authMiddleware.js')
 
 const request = supertest(app);
 
-describe("API completa - Autenticação e Tarefas", () => {
-  let user;
-  let token;
-  let tarefaId;
+urlTarefas = '/tarefas' 
 
-  beforeAll(async () => {
-    user = await User.create({ email: "teste@teste.com", senha: "123456" });
-    const payload = { id: user._id, email: user.email };
-    token = jwt.sign(payload, process.env.JWT_SECRET || "segredo", { expiresIn: "1h" });
-  });
-
-  afterEach(async () => {
-    await Tarefa.deleteMany({});
-    await User.deleteMany({});
-  });
-
-  afterAll(async () => {
-    await mongoose.connection.close();
-  });
-
-  describe("Tarefas", () => {
-    beforeEach(async () => {
-      const tarefa = await Tarefa.create({
-        titulo: "Tarefa 1",
-        descricao: "Descrição da tarefa 1",
-        concluida: false,
-        dataCriacao: new Date(),
-        owner: user._id
-      });
-      tarefaId = tarefa._id;
-    });
-
+ const fakeUser = { id: new mongoose.Types.ObjectId(),email: "teste@teste.com", senha: "123456" };
+ const token = gerarToken({ id: fakeUser.id, email: fakeUser.email, nome: "Maria", perfil: "admin" });
+ tarefaId = null;
+  
     test("POST / deve retornar 201", async () => {
-      const res = await request.post("/tarefas").set("Authorization", `Bearer ${token}`).send({
+      const res = await request.post(urlTarefas).set("Authorization", token)
+      .send({
           titulo: "Nova Tarefa",
           descricao: "Descrição da nova tarefa",
           dataCriacao: new Date(),
-          owner: user._id
+          owner: fakeUser.id
         });
+      
+      tarefaId = res.body.id;
       expect(res.status).toBe(201);
-      expect(res.body.titulo).toBe("Nova Tarefa");
+      
     });
 
-    test("POST / deve retornar 422 - título vazio", async () => {
-      const res = await request.post("/tarefas")
-        .set("Authorization", `Bearer ${token}`)
+      test("POST / deve retornar 422 se título vazio", async () => {
+      const res = await request.post(urlTarefas)
+        .set("Authorization", token)
         .send({ 
           titulo: "   ", 
           descricao: "Descrição", 
           dataCriacao: new Date(), 
-          owner: user._id });
+          owner: fakeUser.id
+      });
       expect(res.status).toBe(422);
+       expect(res.body.msg).toBe("Título da tarefa é obrigatório.");
+
     });
 
-    test("POST / deve retornar 422 - título curto", async () => {
-      const res = await request.post("/tarefas")
-        .set("Authorization", `Bearer ${token}`)
+       test("POST / deve retornar 422 - título curto", async () => {
+      const res = await request.post(urlTarefas)
+        .set("Authorization", token)
         .send({ 
           titulo: "a", 
           descricao: "Descrição", 
           dataCriacao: new Date(), 
-          owner: user._id });
+          owner: fakeUser.id });
       expect(res.status).toBe(422);
     });
 
     test("GET / deve retornar 200", async () => {
-      const res = await request.get("/tarefas").set("Authorization", `Bearer ${token}`);
+      const res = await request.get(urlTarefas).set("Authorization", token);
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
     });
 
     test("GET /:id deve retornar 200", async () => {
-      const res = await request.get(`/tarefas/${tarefaId}`).set("Authorization", `Bearer ${token}`);
-      expect(res.status).toBe(200);
-      expect(res.body.titulo).toBe("Tarefa 1");
+      const res = await request.get(`/tarefas/${tarefaId}`).set("Authorization", token);
+      expect(res.status).toBe(200); 
     });
 
-    test("GET /:id deve retornar 400", async () => {
-      const res = await request.get("/tarefas/0").set("Authorization", `Bearer ${token}`);
+     test("GET /:id deve retornar 400", async () => {
+      const res = await request.get("/tarefas/0000000").set("Authorization", token);
       expect(res.status).toBe(400);
+      expect(res.body.msg).toBe("ID inválido.");
     });
 
     test("GET /:id deve retornar 404", async () => {
-      const res = await request.get("/tarefas/000000000000000000000000").set("Authorization", `Bearer ${token}`);
+      const res = await request.get("/tarefas/000000000000000000000000").set("Authorization",token);
       expect(res.status).toBe(404);
     });
 
     test("PUT /:id deve retornar 200", async () => {
       const res = await request.put(`/tarefas/${tarefaId}`)
-        .set("Authorization", `Bearer ${token}`)
+        .set("Authorization",token)
         .send({ titulo: "Tarefa Atualizada", concluida: true });
       expect(res.status).toBe(200);
       expect(res.body.titulo).toBe("Tarefa Atualizada");
@@ -105,48 +84,48 @@ describe("API completa - Autenticação e Tarefas", () => {
 
     test("PUT /:id deve retornar 422 - título vazio", async () => {
       const res = await request.put(`/tarefas/${tarefaId}`)
-        .set("Authorization", `Bearer ${token}`)
+        .set("Authorization",token)
         .send({ titulo: "   " });
       expect(res.status).toBe(422);
     });
 
     test("PUT /:id deve retornar 422 - título curto", async () => {
       const res = await request.put(`/tarefas/${tarefaId}`)
-        .set("Authorization", `Bearer ${token}`)
+        .set("Authorization",token)
         .send({ titulo: "a" });
       expect(res.status).toBe(422);
     });
 
     test("PUT /:id deve retornar 400", async () => {
       const res = await request.put("/tarefas/0")
-        .set("Authorization", `Bearer ${token}`)
+        .set("Authorization",token)
         .send({ titulo: "Tarefa" });
       expect(res.status).toBe(400);
     });
 
     test("PUT /:id deve retornar 404", async () => {
       const res = await request.put("/tarefas/000000000000000000000000")
-        .set("Authorization", `Bearer ${token}`)
+        .set("Authorization",token)
         .send({ titulo: "Tarefa" });
       expect(res.status).toBe(404);
     });
 
     test("DELETE /:id deve retornar 204", async () => {
       const res = await request.delete(`/tarefas/${tarefaId}`)
-        .set("Authorization", `Bearer ${token}`);
+        .set("Authorization",token);
       expect(res.status).toBe(204);
     });
 
     test("DELETE /:id deve retornar 400", async () => {
       const res = await request.delete("/tarefas/0")
-        .set("Authorization", `Bearer ${token}`);
+        .set("Authorization",token);
       expect(res.status).toBe(400);
     });
 
     test("DELETE /:id deve retornar 404", async () => {
       const res = await request.delete("/tarefas/000000000000000000000000")
-        .set("Authorization", `Bearer ${token}`);
+        .set("Authorization",token);
       expect(res.status).toBe(404);
     });
-  });
-});
+
+

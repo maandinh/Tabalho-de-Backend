@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
+require('dotenv').config()
 
 function compararSenha(password, hash) {
   return bcryptjs.compareSync(password, hash);
@@ -11,36 +12,33 @@ function cifrarSenha(password) {
 }
 
 function gerarToken(payload) {
-  try {
-    const expiresIn = 60;
-    const token = jwt.sign(payload, process.env.JWT_SEGREDO, { expiresIn });
-    return token;
-  } catch (err) {
-    throw Error("Erro ao gerar um token");
-  }
-}
+  try{
+        const expiresIn = 120;
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
+        return token
+    } catch (err) {
+       console.error('Erro ao gerar token:', err);
+        throw Error ("Erro ao gerar um token");
+    } 
+ }
 
 function verificarToken(req, res, next) {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ msg: "Token não fornecido ou formato inválido" });
+      const { authorization } = req.headers;
+       const token = authorization;
+        
+      if (!authorization) {
+      return res.status(401).json({ msg: "Não autorizado" });}
+    
+      const payload = jwt.verify(token, process.env.JWT_SECRET);
+      req.usuario = payload;
+
+      next();
+
+    } catch (err) {
+      return res.status(401).json({ msg: "Token Inválido" });
     }
-
-    const token = authHeader.replace('Bearer', '').trim();
-    console.log("Token recebido:", token);
-
-
-    const payload = jwt.verify(token, process.env.JWT_SEGREDO);
-    console.log("Payload decodificado:", payload);
-
-    req.payload = payload;
-    req.user = payload;
-    return next();
-  } catch (err) {
-    console.log("ERRO NO TOKEN:", err.message);
-    return res.status(401).json({ msg: "Token inválido" });
   }
-}
+
 
 module.exports = { gerarToken, verificarToken, cifrarSenha, compararSenha };

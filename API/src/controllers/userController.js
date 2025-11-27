@@ -2,7 +2,6 @@ const User = require('../models/userModel');
 const { cifrarSenha, compararSenha, gerarToken } = require('../middlewares/authMiddleware');
 
 async function registrar(req, res) {
-    console.log("BODY RECEBIDO:", req.body);
     try {
         const { email, senha } = req.body;
 
@@ -22,7 +21,6 @@ async function registrar(req, res) {
             email: novoUser.email
         });
     } catch (err) {
-        console.log("ERRO COMPLETO:", err);
 
         if (err.code === 11000) {
             return res.status(400).json({
@@ -41,7 +39,7 @@ async function registrar(req, res) {
 }
 
 async function login(req, res, next) {
-    console.log("BODY RECEBIDO (login):", req.body);
+   
     try {
         const { email, senha } = req.body;
 
@@ -52,7 +50,7 @@ async function login(req, res, next) {
         }
 
         const userEncontrado = await User.findOne({ email: email.trim().toLowerCase() });
-        console.log("USUÁRIO ENCONTRADO:", userEncontrado);
+       
 
         if (!userEncontrado) {
             return res.status(401).json({ msg: "Credenciais inválidas." });
@@ -66,7 +64,6 @@ async function login(req, res, next) {
 
         const { gerarToken } = require('../middlewares/authMiddleware');
         const payload = {
-            iss: 'Minha API',
             id: userEncontrado._id,
             email: userEncontrado.email,
             nome: 'Maria',
@@ -77,7 +74,7 @@ async function login(req, res, next) {
 
         return res.json({ token });
     } catch (err) {
-        console.log("ERRO NO LOGIN:", err);
+        
         return res.status(500).json({
             msg: "Erro interno no servidor."
         });
@@ -86,20 +83,20 @@ async function login(req, res, next) {
 
 async function renovar(req, res) {
     try {
-        const payload = {
-            iss: req.payload.iss,
-            id: req.payload.id,
-            email: req.payload.email,
-            nome: req.payload.nome,
-            perfil: req.payload.perfil
+         const payload = {
+            id: req.usuario.id,
+            email: req.usuario.email,
+            nome: req.usuario.nome,
+            perfil: req.usuario.perfil
         };
 
         const { gerarToken } = require('../middlewares/authMiddleware');
         return res.json({ token: gerarToken(payload) });
     } catch (err) {
-        console.log("ERRO AO RENOVAR TOKEN:", err);
+        
         return res.status(500).json({ msg: "Erro ao renovar token." });
     }
 }
+
 
 module.exports = { registrar, login, renovar };

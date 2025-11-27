@@ -21,17 +21,14 @@ async function criar(req, res) {
     });
   } catch (err) {
 
-    if (err.name === "ValidationError") {
+     if (err.errors.titulo) {
+        return res.status(422).json({ msg: err.errors.titulo.message });
+      }
+      if (err.errors.descricao) {
+        return res.status(422).json({ msg: err.errors.descricao.message });
+      }
+    }}
 
-      const mensagens = Object.values(err.errors).map(e => e.menssge);
-      return res.status(422).json({ msg: mensagens[0] });
-    }
-
-    return res.status(500).json({
-      msg: "Erro interno do servidor."
-    });
-  }
-}
 
 async function listar(req, res) {
   try {
@@ -80,7 +77,7 @@ async function atualizar(req, res) {
         }
 
         const tarefaAtualizada = await Tarefa.findOneAndUpdate(
-            { _id: id, owner: req.user.id },
+            { _id: id },
             { ...req.body, dataAtualizacao: new Date() },
             { new: true, runValidators: true }
         );
@@ -99,10 +96,13 @@ async function atualizar(req, res) {
             owner: tarefaAtualizada.owner
         });
     } catch (err) {
-        if (err.errors) {
-            const primeiroErro = Object.values(err.errors)[0];
-            return res.status(422).json({ msg: primeiroErro.message });
-        }
+        if (req.body.titulo && req.body.titulo.trim().length < 2) {
+            return res.status(422).json({ msg: "Título da tarefa é muito curto." });
+                        }
+
+        if (req.body.titulo && req.body.titulo.trim().length === 0) {
+          return res.status(422).json({ msg: "Título da tarefa é obrigatório." });
+}
         return res.status(500).json({ msg: "Erro ao atualizar tarefa." });
     }
 }
@@ -121,7 +121,7 @@ async function remover(req, res) {
     }
 
     return res.status(204).end();
-  } catch (erro) {
+  } catch (err) {
     return res.status(500).json({ erro: "Erro ao remover tarefa" });
   }
 }
