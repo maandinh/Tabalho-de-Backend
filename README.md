@@ -60,9 +60,6 @@ npm install yaml
 ```
 3. Executar scripts definidos no package.json
 ```shell
-npm run nome-do-script
-
-# Exemplos:
 npm run dev    # roda o nodemon
 npm run test   # executa o jest
 ```
