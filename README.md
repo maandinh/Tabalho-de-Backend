@@ -133,6 +133,13 @@ RESPOSTA ESPERADA
   "email": "usuario@exemplo.com"
 }
 ```
+###   1.1 Body exemplo (copiar e colar):
+```bash
+{
+  "email": "usuario@exemplo.com",
+  "senha": "123456"
+}
+```
 ### 2. Login
 ```bash
 curl -X POST http://localhost:3000/auth/login \
