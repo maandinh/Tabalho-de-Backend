@@ -174,7 +174,7 @@ RESPOSTA ESPERADA
 
 ## Integrantes do Grupo e Divisão de Tarefas
 
-- **Julia** – Setup inicial do projeto e documentação; contribuiu na configuração do banco de dados junto com Mariana.  
-- **Mariana** – Configuração do banco de dados junto com Julia; contribuiu na autenticação e no CRUD de tarefas junto com Felipe.  
-- **Felipe** – Implementação da autenticação e do CRUD de tarefas junto com Mariana.  
-- **Amanda** – Testes unitários e de integração; implementou melhorias e funcionalidades extras.
+- **Julia de Souza** – Setup inicial do projeto e documentação; contribuiu na configuração do banco de dados junto com Mariana.  
+- **Mariana Kanashiro** – Configuração do banco de dados junto com Julia; contribuiu na autenticação e no CRUD de tarefas junto com Felipe.  
+- **Felipe Gripp** – Implementação da autenticação e do CRUD de tarefas junto com Mariana.  
+- **Amanda Soares** – Testes unitários e de integração; implementou melhorias e funcionalidades extras.
