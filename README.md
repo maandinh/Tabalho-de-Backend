@@ -122,7 +122,7 @@ JWT_SECRET=sua_chave_secreta
 
 ### 1. Registrar usuário
 ```bash
-curl -X POST http://localhost:3000/auth/register \
+curl -X POST http://localhost:3000/auth/cadastro \
 -H "Content-Type: application/json" \
 -d '{"email":"usuario@exemplo.com","senha":"123456"}'
 ```
@@ -145,7 +145,18 @@ RESPOSTA ESPERADA
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
-### 3. Criar uma tarefa
+### 3. Renovar token JWT
+```bash
+curl -X POST http://localhost:3000/auth/renovar \
+-H "Authorization: Bearer <TOKEN_ATUAL>"
+```
+RESPOSTA ESPERADA
+```json
+{
+  "token": "novo_token_jwt_gerado"
+}
+```
+### 4. Criar uma tarefa
 ```bash
 curl -X POST http://localhost:3000/tarefas \
 -H "Content-Type: application/json" \
@@ -161,7 +172,28 @@ RESPOSTA ESPERADA
   "owner": "64f8c2e1f1a1234567890abc"
 }
 ```
-
+### 5. Listar todas as tarefas
+```bash
+curl -X GET http://localhost:3000/tarefas \
+-H "Authorization: Bearer <TOKEN>"
+```
+### 6. Buscar detalhes de uma tarefa por ID
+```bash
+curl -X GET http://localhost:3000/tarefas/ID_DA_TAREFA \
+-H "Authorization: Bearer <TOKEN>"
+```
+### 7. Atualizar uma tarefa
+```bash
+curl -X PUT http://localhost:3000/tarefas/ID_DA_TAREFA \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer <TOKEN>" \
+-d '{"titulo":"Título atualizado","descricao":"Nova descrição"}'
+```
+### 8. Remover uma tarefa
+```bash
+curl -X DELETE http://localhost:3000/tarefas/ID_DA_TAREFA \
+-H "Authorization: Bearer <TOKEN>"
+```
 ---
 
 ## Funções dos TESTES
