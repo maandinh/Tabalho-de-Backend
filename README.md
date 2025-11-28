@@ -55,10 +55,17 @@ npm install
 npm install express mongoose dotenv jsonwebtoken    
 # instala como dependência de desenvolvimento
 npm install --save-dev jest supertest nodemon
+# instala biblioteca para manipular YAML
+npm install yaml
 ```
 3. Executar scripts definidos no package.json
 ```shell
 npm run nome-do-script
+
+# Exemplos:
+npm run dev    # roda o nodemon
+npm run start  # roda a aplicação
+npm run test   # executa o jest
 ```
 4. Iniciar o servidor de desenvolvimento com Nodemon
 ```shell
@@ -174,7 +181,7 @@ RESPOSTA ESPERADA
 
 ## Integrantes do Grupo e Divisão de Tarefas
 
-- **Julia de Souza** – Setup inicial do projeto e documentação; contribuiu na configuração do banco de dados junto com Mariana.  
-- **Mariana Kanashiro** – Configuração do banco de dados junto com Julia; contribuiu na autenticação e no CRUD de tarefas junto com Felipe.  
-- **Felipe Gripp** – Implementação da autenticação e do CRUD de tarefas junto com Mariana.  
-- **Amanda Soares** – Testes unitários e de integração; implementou melhorias e funcionalidades extras.
+- **Julia de Souza** – Responsável pela criação da estrutura inicial do projeto, organização do repositório e documentação base. Configurou o ambiente do servidor, definiu padrões de rotas e ajudou a estruturar a arquitetura da API. Atuou também na configuração inicial do banco de dados, garantindo conexão estável e modelos básicos em conjunto com Mariana. 
+- **Mariana Kanashiro** – Trabalhou diretamente na modelagem do banco de dados, criação dos schemas, regras de validação e integração com o Mongoose. Auxiliou Julia no setup inicial e colaborou com Felipe na implementação das rotas de autenticação e do CRUD de tarefas. Foi responsável por garantir que as operações no banco estivessem funcionando corretamente. 
+- **Felipe Gripp** – Desenvolveu a parte central da lógica de autenticação, incluindo registro, login, geração e validação de tokens JWT. Trabalhou junto com Mariana na implementação completa das rotas de tarefas (CRUD), aplicando middlewares de autenticação, validação e boas práticas de estruturação das controladoras.  
+- **Amanda Soares** – Responsável pelos testes unitários e de integração, garantindo a qualidade e o funcionamento correto das rotas de autenticação, tarefas e middleware de autorização. Configurou o ambiente de testes, criou cenários de sucesso e erro e validou todo o fluxo da API. Também aprimorou a documentação do projeto, estruturando e expandindo o README para torná-lo mais completo e claro.
