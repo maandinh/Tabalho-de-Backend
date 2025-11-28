@@ -64,7 +64,6 @@ npm run nome-do-script
 
 # Exemplos:
 npm run dev    # roda o nodemon
-npm run start  # roda a aplicação
 npm run test   # executa o jest
 ```
 4. Iniciar o servidor de desenvolvimento com Nodemon
@@ -90,9 +89,13 @@ JWT_SECRET=sua_chave_secreta
   Cadastra um novo usuário.  
   **Body esperado:** `{ "email": "seu_email", "senha": "sua_senha" }`
 
-- **POST /auth/login**  
+- **POST /auth/login**   
   Realiza login de um usuário existente e retorna um token JWT.  
-  **Body esperado:** `{ "email": "seu_email", "senha": "sua_senha" }`  
+  **Body esperado:** `{ "email": "seu_email", "senha": "sua_senha" }`
+
+- **POST /auth/renovar**   
+  Gera um novo token JWT para um usuário já autenticado, evitando que ele precise fazer login novamente.  
+  **Body esperado:** `{ "token": "token_atual" }`
 
 ### Tarefas (Requer token JWT no header `Authorization: Bearer <token>`)
 
