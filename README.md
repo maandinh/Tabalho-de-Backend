@@ -85,7 +85,7 @@ JWT_SECRET=sua_chave_secreta
 
 ### Autenticação
 
-- **POST /auth/register**  
+- **POST /auth/cadastro**  
   Cadastra um novo usuário.  
   **Body esperado:** `{ "email": "seu_email", "senha": "sua_senha" }`
 
@@ -208,9 +208,8 @@ curl -X DELETE http://localhost:3000/tarefas/ID_DA_TAREFA \
 ## Peculiaridades do Projeto
 
 - Cada tarefa está vinculada a um owner (usuário autenticado)
-- DELETE retorna *204 sem corpo*
+- O endpoint DELETE retorna HTTP *204 (No Content)*, seguindo a especificação REST e não enviando corpo na resposta.
 - Validações personalizadas podem gerar *erros 422*
-- O banco de testes é isolado do banco de desenvolvimento
 
 ---
 
