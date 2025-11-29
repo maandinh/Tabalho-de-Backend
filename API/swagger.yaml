@@ -91,6 +91,8 @@ paths:
       tags:
         - usuarios
       summary: Renovar token JWT
+      security:
+        - token_jwt: []
       responses:
         200:
           description: Token renovado
@@ -117,6 +119,8 @@ paths:
       tags:
         - tarefas
       summary: Criar nova tarefa
+      security:
+        - token_jwt: []
       requestBody:
         required: true
         content:
@@ -150,10 +154,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Mensagem'
               examples:
-                msg: "Título da tarefa é obrigatório."
-              examples:
                 summary: Título vazio
-                  value: { msg: "Título da tarefa é obrigatório." }
+                value: { msg: "Título da tarefa é obrigatório." }
                 tituloCurto:
                   summary: Título curto
                   value: { msg: "Título da tarefa deve ter pelo menos 3 caracteres." }
@@ -161,6 +163,8 @@ paths:
       tags:
         - tarefas
       summary: Listar todas as tarefas
+      security:
+        - token_jwt: []
       responses:
         200:
           description: Lista de tarefas
@@ -183,6 +187,8 @@ paths:
       tags:
         - tarefas
       summary: Buscar tarefa por ID
+      security:
+        - token_jwt: []
       parameters:
         - name: id
           in: path
@@ -216,6 +222,8 @@ paths:
       tags:
         - tarefas
       summary: Atualizar tarefa por ID
+      security:
+        - token_jwt: []
       parameters:
         - name: id
           in: path
@@ -274,6 +282,8 @@ paths:
       tags:
         - tarefas
       summary: Remover tarefa por ID
+      security:
+        - token_jwt: []
       parameters:
         - name: id
           in: path
@@ -351,3 +361,9 @@ components:
         owner:
           type: string
       required: [titulo, descricao, concluida, dataCriacao, owner]
+  securitySchemes:
+    token_jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT Authorization header usando Bearer."

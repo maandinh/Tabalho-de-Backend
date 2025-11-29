@@ -12,33 +12,34 @@ function cifrarSenha(password) {
 }
 
 function gerarToken(payload) {
-  try{
-        const expiresIn = 120;
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
-        return token
-    } catch (err) {
-       console.error('Erro ao gerar token:', err);
-        throw Error ("Erro ao gerar um token");
-    } 
- }
+  try {
+    const expiresIn = 120;
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
+    return token
+  } catch (err) {
+    console.error('Erro ao gerar token:', err);
+    throw Error("Erro ao gerar um token");
+  }
+}
 
 function verificarToken(req, res, next) {
   try {
-      const { authorization } = req.headers;
-       const token = authorization;
-        
-      if (!authorization) {
-      return res.status(401).json({ msg: "Não autorizado" });}
-    
-      const payload = jwt.verify(token, process.env.JWT_SECRET);
-      req.usuario = payload;
+    const header = req.headers.authorization;
 
-      next();
-
-    } catch (err) {
-      return res.status(401).json({ msg: "Token Inválido" });
+    if (!header || !header.startsWith('Bearer ')) {
+      return res.status(401).json({ msg: "Não autorizado" });
     }
+
+    const token = header.split(' ')[1];
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    req.usuario = payload;
+
+    next();
+
+  } catch (err) {
+    return res.status(401).json({ msg: "Token Inválido" });
   }
+}
 
 
 module.exports = { gerarToken, verificarToken, cifrarSenha, compararSenha };
