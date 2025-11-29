@@ -33,41 +33,17 @@ Este repositório está organizado da seguinte forma:
 
 ---
 
-## Clonar o repositório
+## Como Rodar
 ```shell
 git clone https://github.com/maandinh/Tabalho-de-Backend.git
 cd  API
-```
-
----
-
-## Comandos Úteis do NPM
-
-1. Criar projeto Node.js
-```bash
-npm init -y
-```
-2. Instalar pacotes
-```shell
-# instala dependências
+git checkout develop
 npm install
-# instala para uso em produção 
-npm install express mongoose dotenv jsonwebtoken    
-# instala como dependência de desenvolvimento
-npm install --save-dev jest supertest nodemon
-# instala biblioteca para manipular YAML
-npm install yaml
+# Cria .env na raiz do projeto
+npm run dev            # inicia com nodemon → http://localhost:3000
 ```
-3. Executar scripts definidos no package.json
-```shell
-npm run dev    # roda o nodemon
-npm run test   # executa o jest
-```
-4. Iniciar o servidor de desenvolvimento com Nodemon
-```shell
-npm run dev
-```
-5. Configurar variáveis de ambiente
+
+## Configurar variáveis de ambiente (.env)
 ```env
 MONGODB_USER=seu_usuario
 MONGODB_PASS=sua_senha
