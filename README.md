@@ -82,7 +82,7 @@ JWT_SECRET=sua_chave_secreta
 
 ### Autenticação
 
-- **POST /auth/cadastro**  
+- **POST /auth/registrar**  
   Cadastra um novo usuário.  
   **Body esperado:** `{ "email": "seu_email", "senha": "sua_senha" }`
 
@@ -119,7 +119,7 @@ JWT_SECRET=sua_chave_secreta
 
 ### 1. Registrar usuário
 ```bash
-curl -X POST http://localhost:3000/auth/cadastro \
+curl -X POST http://localhost:3000/auth/registrar \
 -H "Content-Type: application/json" \
 -d '{"email":"usuario@exemplo.com","senha":"123456"}'
 ```
