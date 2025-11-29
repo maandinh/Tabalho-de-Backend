@@ -1,5 +1,6 @@
 const supertest = require('supertest');
 const app = require('../app.js');
+const mongoose = require('mongoose');
 require("dotenv").config({ path: ".env.test" });
 const User = require('../src/models/userModel');
 const { gerarToken } = require('../src/middlewares/authMiddleware.js');
@@ -9,11 +10,9 @@ urlRegistrar = '/auth/registrar'
 urlLogin = '/auth/login'
 
 describe("Testes da Rota Usuários", () => {
-    
-    
     let usuarioCriado = null;
     let token = null;
-    
+
     test("POST /registrar deve retornar 201", async () => {
         await User.deleteMany({});
         const res = await request.post(urlRegistrar)
@@ -21,28 +20,28 @@ describe("Testes da Rota Usuários", () => {
                 email: "teste@teste.com",
                 senha: "123456"
             });
- 
+
 
         expect(res.status).toBe(201);
         expect(res.body.id).toBeDefined();
 
-          usuarioId = res.body._id;
+        usuarioId = res.body._id;
         usuarioCriado = res.body;
     });
 
-test("POST /registrar deve retornar 400", async () => {
-         const res = await request.post(urlRegistrar)
+    test("POST /registrar deve retornar 400", async () => {
+        const res = await request.post(urlRegistrar)
             .send({
                 email: "",
                 senha: ""
             });
 
-       expect(res.status).toBe(400);
-    expect(res.body.msg).toBe("Email e senha são obrigatórios.");
+        expect(res.status).toBe(400);
+        expect(res.body.msg).toBe("Email e senha são obrigatórios.");
     });
 
     test("POST /registrar não deve aceitar email duplicado", async () => {
-         const res = await request.post(urlRegistrar)
+        const res = await request.post(urlRegistrar)
             .send({
                 email: "teste@teste.com",
                 senha: "123"
@@ -54,7 +53,6 @@ test("POST /registrar deve retornar 400", async () => {
 
 
     test("POST /login deve retornar Token", async () => {
-        
         const res = await request.post(urlLogin)
             .send({
                 email: usuarioCriado.email,
@@ -63,11 +61,10 @@ test("POST /registrar deve retornar 400", async () => {
         token = res.body.token;
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty("token");
-
     });
 
-   test("POST /login deve retornar 401 se senha errada", async () => {
-       const res = await request.post(urlLogin)
+    test("POST /login deve retornar 401 se senha errada", async () => {
+        const res = await request.post(urlLogin)
             .send({
                 email: "login@teste.com",
                 senha: "errada"
@@ -78,7 +75,7 @@ test("POST /registrar deve retornar 400", async () => {
     });
 
     test("POST /login deve retornar 401 se logar com usuário inexistente", async () => {
-         const res = await request.post(urlLogin)
+        const res = await request.post(urlLogin)
             .send({
                 email: "naoexiste@teste.com",
                 senha: "123"
@@ -88,15 +85,11 @@ test("POST /registrar deve retornar 400", async () => {
         expect(res.body.msg).toBe("Credenciais inválidas.");
     });
 
-
     test("POST /renovar deve retornar 200", async () => {
         const res = await request.post("/auth/renovar")
-            .set("Authorization", token);
+            .set("Authorization", `Bearer ${token}`);
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty("token");
-        
     });
-   
 });
- 
