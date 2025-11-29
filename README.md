@@ -9,17 +9,17 @@ Repositório criado para o desenvolvimento da API **Taskly**, uma aplicação de
 
 ## Tecnologias Utilizadas
 
-- Node.js  
-- JavaScript (ESModules ou CommonJS)  
-- Express  
-- MongoDB + Mongoose  
-- JWT (Json Web Token) para autenticação  
-- Jest + Supertest para testes de integração  
-- dotenv para variáveis de ambiente  
+- Node.js
+- JavaScript (ESModules ou CommonJS)
+- Express
+- MongoDB + Mongoose
+- JWT (Json Web Token) para autenticação
+- Jest + Supertest para testes de integração
+- dotenv para variáveis de ambiente
 
 ---
 
-## Organização do Repositório
+## Estrutura do Projeto
 
 Este repositório está organizado da seguinte forma:
 - **src/**: Contém todo o código-fonte da aplicação.
@@ -30,44 +30,20 @@ Este repositório está organizado da seguinte forma:
 - **tests/**: Testes automatizados com Jest + Supertest.
 - **.env**: Variáveis de ambiente para desenvolvimento.
 - **app.js**: Inicializa o servidor e conecta ao MongoDB via Mongoose.
+- **swagger.yaml**: Documentação OpenAPI
 
 ---
 
-## Clonar o repositório
+## Como Rodar
 ```shell
 git clone https://github.com/maandinh/Tabalho-de-Backend.git
 cd  API
-```
-
----
-
-## Comandos Úteis do NPM
-
-1. Criar projeto Node.js
-```bash
-npm init -y
-```
-2. Instalar pacotes
-```shell
-# instala dependências
 npm install
-# instala para uso em produção 
-npm install express mongoose dotenv jsonwebtoken    
-# instala como dependência de desenvolvimento
-npm install --save-dev jest supertest nodemon
-# instala biblioteca para manipular YAML
-npm install yaml
+# Cria .env na raiz do projeto
+npm run dev            # inicia com nodemon → http://localhost:3000
 ```
-3. Executar scripts definidos no package.json
-```shell
-npm run dev    # roda o nodemon
-npm run test   # executa o jest
-```
-4. Iniciar o servidor de desenvolvimento com Nodemon
-```shell
-npm run dev
-```
-5. Configurar variáveis de ambiente
+
+## Configurar variáveis de ambiente (.env)
 ```env
 MONGODB_USER=seu_usuario
 MONGODB_PASS=sua_senha
@@ -82,7 +58,7 @@ JWT_SECRET=sua_chave_secreta
 
 ### Autenticação
 
-- **POST /auth/cadastro**  
+- **POST /auth/registrar**  
   Cadastra um novo usuário.  
   **Body esperado:** `{ "email": "seu_email", "senha": "sua_senha" }`
 
@@ -92,13 +68,13 @@ JWT_SECRET=sua_chave_secreta
 
 - **POST /auth/renovar**   
   Gera um novo token JWT para um usuário já autenticado, evitando que ele precise fazer login novamente.  
-  **Body esperado:** `{ "token": "token_atual" }`
+  **Esperado:** `Header: Authorization: Bearer <token>`
 
 ### Tarefas (Requer token JWT no header `Authorization: Bearer <token>`)
 
 - **POST /tarefas**  
   Cria uma nova tarefa para o usuário autenticado.  
-  **Body esperado:** `{ "titulo": "Nome da tarefa", "descricao": "Detalhes da tarefa" }`
+  **Body esperado:** `{ "titulo": "Nome da tarefa", "descricao": "Detalhes da tarefa", "concluida": boolean, "dataCriacao": yyyy-mm-ddHH:mm:ssZ, "owner": "675dfe14720bbc96e0fd35c3" }`
 
 - **GET /tarefas**  
   Lista todas as tarefas do usuário autenticado.
@@ -108,7 +84,7 @@ JWT_SECRET=sua_chave_secreta
 
 - **PUT /tarefas/:id**  
   Atualiza os dados de uma tarefa existente.  
-  **Body esperado:** `{ "titulo": "Novo título", "descricao": "Nova descrição" }`
+  **Body esperado:** `{ "titulo": "Novo título", "descricao": "Nova descrição", "concluida": boolean, "dataCriacao": yyyy-mm-ddHH:mm:ssZ, "owner": "675dfe14720bbc96e0fd35c3" }`
 
 - **DELETE /tarefas/:id**  
   Deleta a tarefa especificada pelo `id`. Retorna **204 sem corpo**.
@@ -170,11 +146,13 @@ curl -X POST http://localhost:3000/tarefas \
 RESPOSTA ESPERADA
 ```json
 {
-  "id": "64f8c3e1f1a1234567890def",
-  "titulo": "Estudar JavaScript",
-  "descricao": "Estudar ESModules e CommonJS",
-  "owner": "64f8c2e1f1a1234567890abc"
-}
+    "_id": "692a57e820bab80f0d31b67c",
+    "titulo": "Nova Tarefa",
+    "descricao": "Descrição da nova tarefa",
+    "concluida": false,
+    "dataCriacao": "2025-11-27T18:00:00.000Z",
+    "owner": "675dfe14720bbc96e0fd35c3"
+  }
 ```
 ### 5. Listar todas as tarefas
 ```bash
@@ -191,12 +169,24 @@ curl -X GET http://localhost:3000/tarefas/ID_DA_TAREFA \
 curl -X PUT http://localhost:3000/tarefas/ID_DA_TAREFA \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer <TOKEN>" \
--d '{"titulo":"Título atualizado","descricao":"Nova descrição"}'
+-d '{
+  "titulo": "Tarefa Atualizada",
+  "descricao": "Descrição atualizada",
+  "concluida": true,
+  "dataCriacao": "2025-11-27T18:00:00Z",
+  "owner": "675dfe14720bbc96e0fd35c3"
+}'
 ```
 ### 8. Remover uma tarefa
 ```bash
 curl -X DELETE http://localhost:3000/tarefas/ID_DA_TAREFA \
 -H "Authorization: Bearer <TOKEN>"
+```
+
+---
+## Testes Automatizados
+```bash
+npm test
 ```
 ---
 
