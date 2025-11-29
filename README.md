@@ -38,6 +38,7 @@ Este repositório está organizado da seguinte forma:
 ```shell
 git clone https://github.com/maandinh/Tabalho-de-Backend.git
 cd  API
+git checkout develop
 npm install
 # Cria .env na raiz do projeto
 npm run dev            # inicia com nodemon → http://localhost:3000
@@ -159,10 +160,34 @@ RESPOSTA ESPERADA
 curl -X GET http://localhost:3000/tarefas \
 -H "Authorization: Bearer <TOKEN>"
 ```
+RESPOSTA ESPERADA
+```json
+[
+  {
+    "id": "692a57e820bab80f0d31b67c",
+    "titulo": "Estudar JavaScript",
+    "descricao": "Estudar ESModules e CommonJS",
+    "concluida": false,
+    "dataCriacao": "2025-11-29T10:00:00.000Z",
+    "owner": "64f8c2e1f1a1234567890abc"
+  }
+]
+```
 ### 6. Buscar detalhes de uma tarefa por ID
 ```bash
 curl -X GET http://localhost:3000/tarefas/ID_DA_TAREFA \
 -H "Authorization: Bearer <TOKEN>"
+```
+RESPOSTA ESPERADA
+```json
+{
+  "id": "692a57e820bab80f0d31b67c",
+  "titulo": "Estudar JavaScript",
+  "descricao": "Estudar ESModules e CommonJS",
+  "concluida": false,
+  "dataCriacao": "2025-11-29T10:00:00.000Z",
+  "owner": "64f8c2e1f1a1234567890abc"
+}
 ```
 ### 7. Atualizar uma tarefa
 ```bash
@@ -171,17 +196,28 @@ curl -X PUT http://localhost:3000/tarefas/ID_DA_TAREFA \
 -H "Authorization: Bearer <TOKEN>" \
 -d '{
   "titulo": "Tarefa Atualizada",
-  "descricao": "Descrição atualizada",
   "concluida": true,
-  "dataCriacao": "2025-11-27T18:00:00Z",
-  "owner": "675dfe14720bbc96e0fd35c3"
 }'
+```
+RESPOSTA ESPERADA
+```json
+{
+  "id": "692a57e820bab80f0d31b67c",
+  "titulo": "Tarefa Atualizada",
+  "descricao": "Estudar ESModules e CommonJS",
+  "concluida": true,
+  "dataCriacao": "2025-11-29T10:00:00.000Z",
+  "dataAtualizacao": "2025-11-29T15:30:00.000Z",
+  "owner": "64f8c2e1f1a1234567890abc"
+}
 ```
 ### 8. Remover uma tarefa
 ```bash
 curl -X DELETE http://localhost:3000/tarefas/ID_DA_TAREFA \
 -H "Authorization: Bearer <TOKEN>"
 ```
+RESPOSTA ESPERADA
+→ 204 No Content (sem corpo na resposta)
 
 ---
 ## Testes Automatizados
